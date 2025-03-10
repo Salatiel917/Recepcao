@@ -1,71 +1,22 @@
 import 'dotenv/config'
+
+import bcrypt from "bcrypt"
+import z from "zod"
 import fastify from "fastify"
 import { prisma } from "./lib/prisma"
+import userRoutes from './routes/userRoutes'
+import fastifyCors from '@fastify/cors'
+import fastifyJwt from '@fastify/jwt'
 
 const app = fastify()
 
+app.register(fastifyCors)
 
-//LISTAR TODOS OS USUARIOS
-app.get('/user', async (req, res) => {
-
-    const dataUser = await prisma.user.findMany()
-    
-    res.status(200).send(dataUser)
+app.register(fastifyJwt, {
+    secret:"halfguard"
 })
 
-//CRIAR USUARIO
-app.post('/user', async (req, res) => {
-    
-    const dataUser = req.body
-    
-    const User = await prisma.user.create({
-        data: dataUser
-    
-    })
-
-    res.status(201).send('Usuario criado com sucesso!')
-})
-
-//ATUALIZAR USUARIO
-app.put('/user/:id', async (req, res) => {
-    
-    const idUser = req.params
-    const dataUser = req.body
-
-    console.log(idUser)
-    console.log(dataUser)
-
-    const User = await prisma.user.update({
-        where: { 
-            id: idUser.id
-        },
-        
-        data: dataUser
-        
-    })
-
-    res.status(200).send('Usuario atualizado com sucesso!')
-        
-})
-
-//DELETAR USUARIO
-app.delete('/user/:id', async (req, res) => {
-    
-    const idUser = req.params
-    
-    const User = await prisma.user.delete({
-
-     where:{
-        
-        id: idUser.id
-        
-    }
-    
-    })
-    
-    res.status(200).send('Usuario deletado com suscesso!')
-
-})
+app.register(userRoutes)
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT

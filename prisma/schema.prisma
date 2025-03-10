@@ -12,8 +12,13 @@ datasource db {
 
 model User {
   id String @id @unique @default(uuid())
-  name  String
-  email String
-  tel   String
+  name         String
+  chegada      String
+  consultor    String
+  status       String
+  observação   String
+  tel          String
+  email        String
   createdAt DateTime @default(now())
 }
+
